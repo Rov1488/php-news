@@ -104,8 +104,7 @@ function addCategory($title)
 {
     include "db_connect.php";
 
-    $sql = "insert into category (title) 
-values (:title)";
+    $sql = "insert into category (title) values (:title)";
     $stm = $conn->prepare($sql);
     $stm->bindParam(":title", $title);
     return $stm->execute();
