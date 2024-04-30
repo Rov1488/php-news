@@ -25,7 +25,7 @@ if(isset($_GET['id']) && isset($_GET["del"]) && !empty($_GET["del"]) == 'del-ite
     $del = $_GET["del"];
     $result = deleteData("category", $id, $del);
     if ($result){
-        redirect('course.php');
+        redirect('category.php');
     }
 }
 
@@ -98,8 +98,8 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
     <td><?=$item['id'];?></td>
     <td><?=$item['title'];?></td>
     <td>
-     <a href="edit-course.php?id=<?=$item['id'];?>"><i class="bi bi-pencil-square"></i></a>
-     <a class="delete" name="del_item" href="course.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
+     <a href="edit-category.php?id=<?=$item['id'];?>"><i class="bi bi-pencil-square"></i></a>
+     <a class="delete" name="del_item" href="category.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
     </td>
    </tr>
    <?php endforeach; ?>

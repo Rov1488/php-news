@@ -1,7 +1,8 @@
 <?php
 include "init.php";
+
 function debug($arr, $die = false){
-    echo '<pre>'.print_r($arr, true).'</pre>';
+    echo '<pre>'. print_r($arr, true) .'</pre>';
     if ($die) die;
 }
 
@@ -110,14 +111,13 @@ values (:title)";
     return $stm->execute();
 }
 
-function updateRoom($id, $floor, $roomNumber)
+function updateCategory($id, $title)
 {
     include "db_connect.php";
 
-    $sql = "update room_table set floor = :floor, room_number = :roomNumber where id=:id";
+    $sql = "update category set title = :title where id=:id";
     $stm = $conn->prepare($sql);
-    $stm->bindParam(":floor", $floor);
-    $stm->bindParam(":roomNumber", $roomNumber);
+    $stm->bindParam(":title", $title);
     $stm->bindParam(":id", $id);
     return $stm->execute();
 }

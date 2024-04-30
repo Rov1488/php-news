@@ -3,16 +3,21 @@
 //include_once __DIR__. "/../../../config/db_functions.php";
 include __DIR__. "/../layout/header.php";
 
-$title = null;
+$id = null;
+if(isset($_GET['id'])){
+    $id = $_GET['id']; //id = 15;
+}
 
-if (isset($_POST['add_category'])){
+$result = getById("category", $id);
 
-  if (isset($_POST["category_title"])) {
-      $title = $_POST["category_title"];
-  }
+if (isset($_POST['update_category'])){
 
-$result = addCategory($title);
-    if ($result){
+    if (isset($_POST["category_title"])) {
+        $title = $_POST["category_title"];
+    }
+
+    $result_1 = updateCategory($id, $title);
+    if ($result_1){
         redirect('category.php');
     }
 }
@@ -20,7 +25,7 @@ $result = addCategory($title);
 ?>
 <br>
 <div class="container">
-<section class="content">
+    <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
@@ -32,7 +37,7 @@ $result = addCategory($title);
                             <div class="card-body">
                                 <div class="form-group has-feedback">
                                     <label for="login">Category name</label>
-                                    <input class="form-control" name="category_title" id="category_title" type="text" data-error="You must write course name" value="" required>
+                                    <input class="form-control" name="category_title" id="category_title" type="text" data-error="You must write course name" value="<?=$result['title']?>" required>
                                     <div class="help-block with-errors"></div>
                                 </div>
 
@@ -40,17 +45,17 @@ $result = addCategory($title);
                             <!-- /.box-body -->
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary" name="add_category">Добавить</button>
+                                <button type="submit" class="btn btn-primary" name="update_category">Обновить</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                    </div>
-                </div>
             </div>
-    </section>
+        </div>
+</div>
+</section>
 
-    </div>
+</div>
 
 
 <?php include __DIR__. "/../layout/footer.php"; ?>

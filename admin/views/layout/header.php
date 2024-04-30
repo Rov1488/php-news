@@ -1,5 +1,4 @@
 <?php
-//require __DIR__. "/../../../config/init.php";
 require __DIR__. "/../../../config/db_connect.php";
 require __DIR__ . "/../../../config/db_functions.php";
 ?>
@@ -9,7 +8,7 @@ require __DIR__ . "/../../../config/db_functions.php";
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PHP-NEWS</title>
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css">
     <link href="/assets/css/style.css" rel="stylesheet">
 </head>
