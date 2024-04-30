@@ -1,0 +1,45 @@
+#RewriteEngine on
+#RewriteRule (.*) public/$1
+Options -Indexes
+IndexIgnore */*
+Options FollowSymLinks
+RewriteEngine on
+RewriteEngine On
+AddDefaultCharset utf-8
+#RewriteCond %{HTTPS} off
+#RewriteCond %{HTTP:X-Forwarded-Proto} !https
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) index.php?$1 [L,QSA]
+
+# Если запрос начинается с /administrator, то заменяем на /backend/web/
+#RewriteCond %{REQUEST_URI} ^/admin
+#RewriteRule ^admin\/?(.*) /public/web/index.php
+
+#RewriteCond %{REQUEST_URI} ^/insurance
+#RewriteRule ^insurance\/?(.*) /company/web/$1
+
+# Добавляем другой запрос /frontend/web/$1
+#RewriteCond %{REQUEST_URI} !^/(frontend/web|backend/web|admin|company/web|insurance)
+#RewriteRule (.*) /frontend/web/$1
+
+# Если frontend запрос
+#RewriteCond %{REQUEST_URI} ^/frontend/web
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule . /frontend/web/index.php
+
+# Если backend запрос
+#RewriteCond %{REQUEST_URI} ^/backend/web
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule . /backend/web/index.php
+
+
+# Если backend запрос
+#RewriteCond %{REQUEST_URI} ^/company/web
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule . /company/web/index.php
