@@ -9,6 +9,7 @@ if (isset($_POST['add_category'])){
 
   if (isset($_POST["category_title"])) {
       $title = $_POST["category_title"];
+
   }
 
 $result = addCategory($title);
