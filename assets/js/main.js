@@ -2,7 +2,7 @@
 //$(".demo").jqzoomer();
 
 // Get the modal
-var modal = document.getElementById("myModal");
+/*var modal = document.getElementById("myModal");
 
 // Get the image and insert it inside the modal - use its "alt" text as a caption
 var img = document.getElementById("myImg");
@@ -20,10 +20,18 @@ var span = document.getElementsByClassName("close")[0];
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
     modal.style.display = "none";
-}
+}*/
 
 //delet-item
-$('.delete').on('click', function () {
+$('.delete-item').on('click', function (e) {
+    e.preventDefault();
     let res = confirm('Подтвердите действие');
     if(!res) return false;
 });
+/*
+$(document).ready(function(){
+    $(".delete-item").on('click', function(){
+        let res = confirm('Подтвердите действие');
+        if(!res) return false;
+    });
+});*/

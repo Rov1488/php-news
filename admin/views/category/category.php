@@ -99,7 +99,7 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
     <td><?=$item['title'];?></td>
     <td>
      <a href="edit-category.php?id=<?=$item['id'];?>"><i class="bi bi-pencil-square"></i></a>
-     <a class="delete" name="del_item" href="category.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
+     <a class="delete-item" name="del_item" href="category.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
     </td>
    </tr>
    <?php endforeach; ?>
