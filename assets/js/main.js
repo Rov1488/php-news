@@ -23,8 +23,8 @@ span.onclick = function() {
 }*/
 
 //delet-item
-$('.delete-item').on('click', function (e) {
-    e.preventDefault();
+$('.delete').on('click', function () {
+    //e.preventDefault();
     let res = confirm('Подтвердите действие');
     if(!res) return false;
 });
