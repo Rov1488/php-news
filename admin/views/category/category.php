@@ -2,8 +2,6 @@
 
 require __DIR__. "/../layout/header.php";
 
-
-
 //PAGINATION options
 $page = 1;
 if (isset($_GET['page'])) {
