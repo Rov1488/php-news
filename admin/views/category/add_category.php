@@ -48,10 +48,9 @@ $result = addCategory($title);
                 </div>
                     </div>
                 </div>
-            </div>
     </section>
+</div>
 
-    </div>
 
 
 <?php include __DIR__. "/../layout/footer.php"; ?>
