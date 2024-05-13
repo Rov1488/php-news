@@ -23,7 +23,7 @@ function htmlChars($str){
 
 
 //Get data in table with id
-function getDataBYtableId($tableName, $id = null)
+function getDataByTableId($tableName, $id = null)
 {
     include "db_connect.php";
     if (is_null($id)){
@@ -44,6 +44,16 @@ function getDataBYtable($tableName)
     $sth = $conn->prepare($sql);
     $sth->execute();
     return $sth->fetchAll(PDO::FETCH_ASSOC);
+}
+//id orqali ma'lumot olish
+function getById($tableName, $id)
+{
+    include "db_connect.php";
+    $sql = "select * from {$tableName} where id = :id";
+    $st = $conn->prepare($sql);
+    $st->bindParam(":id", $id);
+    $st->execute();
+    return $st->fetch(PDO::FETCH_ASSOC);
 }
 
 //FOR PAGINATION
@@ -121,18 +131,32 @@ function updateCategory($id, $title)
     return $stm->execute();
 }
 
-
-
-//id orqali ma'lumot olish
-function getById($tableName, $id)
+function addPost($title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $created_at, $updated_at, $thumb_img, $images = [], $visited_count = 1)
 {
     include "db_connect.php";
-    $sql = "select * from {$tableName} where id = :id";
-    $st = $conn->prepare($sql);
-    $st->bindParam(":id", $id);
-    $st->execute();
-    return $st->fetch(PDO::FETCH_ASSOC);
+
+    $sql = "insert into posts (title_uz, title_ru, title_en, category_id, author_id, content_uz, content_ru, content_en, created_at, updated_at, thumb_img, image, visited_count) 
+values (:title_uz, :title_ru, :title_en, :category_id, :author_id, :content_uz, :content_ru, :content_en, :created_at, :updated_at, :thumb_img, :image, :visited_count)";
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":title_uz", $title_uz);
+    $stm->bindParam(":title_ru", $title_ru);
+    $stm->bindParam(":title_en", $title_en);
+    $stm->bindParam(":category_id", $category_id);
+    $stm->bindParam(":author_id", $author_id);
+    $stm->bindParam(":content_uz", $content_uz);
+    $stm->bindParam(":content_ru", $content_ru);
+    $stm->bindParam(":content_en", $content_en);
+    $stm->bindParam(":created_at", $created_at);
+    $stm->bindParam(":updated_at", $updated_at);
+    $stm->bindParam(":thumb_img", $thumb_img);
+    $stm->bindParam(":image", $images);
+    $stm->bindParam(":visited_count", $visited_count);
+    return $stm->execute();
 }
+
+
+
+
 
 function addCourse($title, $price)
 {
@@ -204,6 +228,14 @@ function checkUser($username){
     //$sth->bindParam(":password", $password);
     $sth->execute();
     return $sth->fetch(PDO::FETCH_ASSOC);
+}
+
+/*
+ * Function upload image
+ * */
+function uploadFile(string $file_tmp, string $upload_folder, string $file_name): bool {
+        @move_uploaded_file($file_tmp, $upload_folder.$file_name);
+            return true;
 }
 
 

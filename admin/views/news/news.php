@@ -21,9 +21,9 @@ $order = null;
 if(isset($_GET['id']) && isset($_GET["del"]) && !empty($_GET["del"]) == 'del-item'){
     $id = $_GET['id'];
     $del = $_GET["del"];
-    $result = deleteData("category", $id, $del);
+    $result = deleteData("posts", $id, $del);
     if ($result){
-        redirect('category.php');
+        redirect('news.php');
     }
 }
 
@@ -44,12 +44,12 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Category</li>
+                <li class="breadcrumb-item active" aria-current="page">POST</li>
             </ol>
         </nav>
 
         <div class="d-grid gap-1 d-md-block">
-            <a href="add_category.php" class="btn btn-success">ADD CATEGORY</a>
+            <a href="add_new.php" class="btn btn-success">ADD POST</a>
         </div>
         <div class="card-body">
             <div class="row">
@@ -59,46 +59,54 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
                         <tr>
                             <th scope="col">#ID
                                 <?php if (!empty($s_type) &&  $s_type == 'asc'): ?>
-                                    <a href="category.php?sort=id,desc">
+                                    <a href="news.php?sort=id,desc">
                                         <i class="bi bi-sort-down-alt"></i>
                                     </a>
                                 <?php elseif (!empty($s_type) &&  $s_type == 'desc'): ?>
-                                    <a href="category.php?sort=id,asc">
+                                    <a href="news.php?sort=id,asc">
                                         <i class="bi bi-sort-up-alt"></i>
                                     </a>
                                 <?php else:?>
-                                    <a href="category.php?sort=id,asc">
+                                    <a href="news.php?sort=id,asc">
                                         <i class="bi bi-sort-down-alt"></i>
                                     </a>
                                 <?php endif; ?>
                             </th>
-                            <th scope="col">Category name
+                            <th scope="col">Title
                                 <?php if (!empty($s_type) &&  $s_type == 'asc'): ?>
-                                    <a href="category.php?sort=title,desc">
+                                    <a href="news.php?sort=title,desc">
                                         <i class="bi bi-sort-down-alt"></i>
                                     </a>
                                 <?php elseif (!empty($s_type) &&  $s_type == 'desc'): ?>
-                                    <a href="category.php?sort=title,asc">
+                                    <a href="news.php?sort=title,asc">
                                         <i class="bi bi-sort-up-alt"></i>
                                     </a>
                                 <?php else:?>
-                                    <a href="category.php?sort=title,asc">
+                                    <a href="news.php?sort=title,asc">
                                         <i class="bi bi-sort-down-alt"></i>
                                     </a>
                                 <?php endif; ?>
                             </th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Author</th>
                             <th scope="col">Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach (getListSort('category', $page, $order) as $item): ?>
+                        <?php foreach (getListSort('posts', $page, $order) as $item): ?>
+                        <?php
+                            $category_title = getById('category', $item['category_id']);
+                            $author = getById('users', $item['author_id']);
+                        ?>
                             <tr>
 
                                 <td><?=$item['id'];?></td>
-                                <td><?=$item['title'];?></td>
+                                <td><?=$item['title_uz'];?></td>
+                                <td><?=$category_title["title"];?></td>
+                                <td><?=$author['firstname']." ".$author['lastname'];?></td>
                                 <td>
-                                    <a href="edit-category.php?id=<?=$item['id'];?>"><i class="bi bi-pencil-square"></i></a>
-                                    <a class="delete" name="del_item" href="category.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
+                                    <a href="edit_new.php?id=<?=$item['id'];?>"><i class="bi bi-pencil-square"></i></a>
+                                    <a class="delete" name="del_item" href="news.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -110,22 +118,22 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
                     <ul class="pagination justify-content-center">
                         <?php if ($previous_page > 0): ?>
                             <li class="page-item">
-                                <a class="page-link" href="category.php?page=<?=$previous_page; ?>" aria-label="Previous">
+                                <a class="page-link" href="news.php?page=<?=$previous_page; ?>" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
                         <?php endif;?>
-                        <?php for ($i = 1; $i <= getPageCount('category'); $i++): $val_sort = $i; ?>
+                        <?php for ($i = 1; $i <= getPageCount('posts'); $i++): $val_sort = $i; ?>
                             <?php if(!is_null($order)){
                                 $val_sort = $i."&"."sort=".$sort;
                             } ?>
                             <li class="page-item <?php echo (isset($_GET["page"]) && $_GET["page"] == $i) ? 'active' : ''?>">
-                                <a class="page-link" href="category.php?page=<?=$val_sort;?>"><?=$i?></a>
+                                <a class="page-link" href="news.php?page=<?=$val_sort;?>"><?=$i?></a>
                             </li>
                         <?php endfor; ?>
-                        <?php if ($next_page <= getPageCount("category")):?>
+                        <?php if ($next_page <= getPageCount("posts")):?>
                             <li class="page-item">
-                                <a class="page-link" href="category.php?page=<?=$next_page; ?>" aria-label="Next">
+                                <a class="page-link" href="news.php?page=<?=$next_page; ?>" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
