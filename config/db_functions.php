@@ -154,6 +154,46 @@ values (:title_uz, :title_ru, :title_en, :category_id, :author_id, :content_uz, 
     return $stm->execute();
 }
 
+function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $images = [])
+{
+    include "db_connect.php";
+    $sql = "update posts set title_uz = :title_uz, title_ru = :title_ru, title_en = :title_en, category_id = :category_id, author_id = :author_id, content_uz = :content_uz, content_ru = :content_ru, content_en = :content_en, updated_at = :updated_at, thumb_img = :thumb_img, image = :image   where id = :id";
+
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":id", $id);
+    $stm->bindParam(":title_uz", $title_uz);
+    $stm->bindParam(":title_ru", $title_ru);
+    $stm->bindParam(":title_en", $title_en);
+    $stm->bindParam(":category_id", $category_id);
+    $stm->bindParam(":author_id", $author_id);
+    $stm->bindParam(":content_uz", $content_uz);
+    $stm->bindParam(":content_ru", $content_ru);
+    $stm->bindParam(":content_en", $content_en);
+    $stm->bindParam(":updated_at", $updated_at);
+    $stm->bindParam(":thumb_img", $thumb_img);
+    $stm->bindParam(":image", $images);
+    return $stm->execute();
+}
+
+function updatePostnoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at)
+{
+    include "db_connect.php";
+    $sql = "update posts set title_uz = :title_uz, title_ru = :title_ru, title_en = :title_en, category_id = :category_id, author_id = :author_id, content_uz = :content_uz, content_ru = :content_ru, content_en = :content_en, updated_at = :updated_at where id = :id";
+
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":id", $id);
+    $stm->bindParam(":title_uz", $title_uz);
+    $stm->bindParam(":title_ru", $title_ru);
+    $stm->bindParam(":title_en", $title_en);
+    $stm->bindParam(":category_id", $category_id);
+    $stm->bindParam(":author_id", $author_id);
+    $stm->bindParam(":content_uz", $content_uz);
+    $stm->bindParam(":content_ru", $content_ru);
+    $stm->bindParam(":content_en", $content_en);
+    $stm->bindParam(":updated_at", $updated_at);
+    return $stm->execute();
+}
+
 
 
 

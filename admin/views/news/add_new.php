@@ -15,7 +15,7 @@ $image = null;
 //thumb image size
 $thumb_img = null;
 $thumb_img_width = '150';
-$thumb_img_height = '80';
+$thumb_img_height = '90';
 
 //Get categories and author
 $category = getDataBYtable('category');
@@ -69,16 +69,16 @@ if (isset($_POST['add_post'])){
             $file_name = $_FILES['images']['name'][$key];
             $file_size = $_FILES['images']['size'][$key];
             $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-            $images [] = $file_name;
+            $images [] = date('Y-m-d', time())."_".$file_name;
             //thumb_img prepare
             $thumb_file_name = $images[0];
-            $thumb_img = $images[0];
+            $thumb_img = $thumb_file_name;
             $file_format_arr = explode('.', $thumb_file_name);
             $thumb_file_ext = strtolower(end($file_format_arr));
             $image = implode(",", $images);//image name string for save DB
 
-            $new_name = time().$file_name;
-            $upload_dir = $upload_folder.time().$thumb_file_name;
+            $new_name = date('Y-m-d', time())."_".$file_name;
+            $upload_dir = $upload_folder.$thumb_file_name;
             $filepath = $upload_folder.$new_name;
             if (in_array(strtolower($file_ext), $extensions) === false) {
                 $errors[] = "Fayl formati JPEG yoki PNG bo`lishi kerak.";
@@ -89,7 +89,6 @@ if (isset($_POST['add_post'])){
 
             if (empty($errors) === true) {
                  @move_uploaded_file($file_tmp_name, $filepath);
-                //@move_uploaded_file($file_tmp_name[0], $upload_dir);
                 /**
                  * Метод для проверки ширину и высоту изображение
                  * @param string $target путь к оригинальному файлу
@@ -98,7 +97,7 @@ if (isset($_POST['add_post'])){
                  * @param string $hmax максимальная высота
                  * @param string $ext расширение файла
                  */
-                $thumb_dir = $thumb_folder.time().$thumb_file_name;
+                $thumb_dir = $thumb_folder.$thumb_file_name;
                 $resiz_img = resize($upload_dir, $thumb_dir, $thumb_img_width, $thumb_img_height, $thumb_file_ext);
                    $success[] = "Fayl yuklandi";
             }
@@ -161,7 +160,7 @@ if (isset($_POST['add_post'])){
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class="form-label fw-bold" for="login">Title EN</label>
-                                    <input class="form-control" name="title_uz" id="title_en" type="text" data-error="You must write fields name" value="" required>
+                                    <input class="form-control" name="title_en" id="title_en" type="text" data-error="You must write fields name" value="" required>
                                     <div class="help-block with-errors text-danger"></div>
                                 </div>
                                 <div class="form-group has-feedback">
