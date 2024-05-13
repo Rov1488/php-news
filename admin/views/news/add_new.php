@@ -84,20 +84,22 @@ if (isset($_POST['add_post'])){
                 $errors[] = "Fayl formati JPEG yoki PNG bo`lishi kerak.";
             }
             if ($file_size > $maxsize) {
-                $errors[] = 'File hajmi 4 MB dan katta bo`lmasligi kerak';
+                $errors[] = 'File hajmi 30 MB dan katta bo`lmasligi kerak';
             }
-            /**
-             * Метод для проверки ширину и высоту изображение
-             * @param string $target путь к оригинальному файлу
-             * @param string $dest путь сохранения обработанного файла
-             * @param string $wmax максимальная ширина
-             * @param string $hmax максимальная высота
-             * @param string $ext расширение файла
-             */
-            $resiz_img = resize($upload_dir, $thumb_folder, $thumb_img_width, $thumb_img_height, $thumb_file_ext);
 
             if (empty($errors) === true) {
                  @move_uploaded_file($file_tmp_name, $filepath);
+                //@move_uploaded_file($file_tmp_name[0], $upload_dir);
+                /**
+                 * Метод для проверки ширину и высоту изображение
+                 * @param string $target путь к оригинальному файлу
+                 * @param string $dest путь сохранения обработанного файла
+                 * @param string $wmax максимальная ширина
+                 * @param string $hmax максимальная высота
+                 * @param string $ext расширение файла
+                 */
+                $thumb_dir = $thumb_folder.time().$thumb_file_name;
+                $resiz_img = resize($upload_dir, $thumb_dir, $thumb_img_width, $thumb_img_height, $thumb_file_ext);
                    $success[] = "Fayl yuklandi";
             }
 
