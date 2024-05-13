@@ -89,6 +89,7 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
                             </th>
                             <th scope="col">Category</th>
                             <th scope="col">Author</th>
+                            <th scope="col">Thumb_img</th>
                             <th scope="col">Action</th>
                         </tr>
                         </thead>
@@ -104,6 +105,7 @@ if (isset($_GET['sort']) && !empty($_GET['sort'])){
                                 <td><?=$item['title_uz'];?></td>
                                 <td><?=$category_title["title"];?></td>
                                 <td><?=$author['firstname']." ".$author['lastname'];?></td>
+                                <td><img src="/admin/uploads/thumb/<?=$item['thumb_img']?>"/></td>
                                 <td>
                                     <a href="edit_new.php?id=<?=$item['id'];?>"><i class="bi bi-pencil-square"></i></a>
                                     <a class="delete" name="del_item" href="news.php?id=<?=$item['id'];?>&del=del-item"><i class="bi bi-trash3"></i></a>
