@@ -55,6 +55,16 @@ function getById($tableName, $id)
     $st->execute();
     return $st->fetch(PDO::FETCH_ASSOC);
 }
+//post_id orqali ma'lumot olish
+function getByPostId($tableName, $post_id)
+{
+    include "db_connect.php";
+    $sql = "select tag_id from {$tableName} where post_id = :post_id";
+    $st = $conn->prepare($sql);
+    $st->bindParam(":post_id", $post_id);
+    $st->execute();
+    return $st->fetchAll(PDO::FETCH_ASSOC);
+}
 
 //FOR PAGINATION
 function getPageCount($tableName)
@@ -131,7 +141,28 @@ function updateCategory($id, $title)
     return $stm->execute();
 }
 
-function addPost($title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $created_at, $updated_at, $thumb_img, $images = [], $visited_count = 1)
+function addTag($name)
+{
+    include "db_connect.php";
+
+    $sql = "insert into tag (name) values (:name)";
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":name", $name);
+    return $stm->execute();
+}
+
+function updateTag($id, $name)
+{
+    include "db_connect.php";
+
+    $sql = "update tag set name = :name where id=:id";
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":name", $name);
+    $stm->bindParam(":id", $id);
+    return $stm->execute();
+}
+
+function addPost($title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $created_at, $updated_at, $thumb_img, $images = [], $post_tags = null, $visited_count = 1)
 {
     include "db_connect.php";
 
@@ -151,11 +182,26 @@ values (:title_uz, :title_ru, :title_en, :category_id, :author_id, :content_uz, 
     $stm->bindParam(":thumb_img", $thumb_img);
     $stm->bindParam(":image", $images);
     $stm->bindParam(":visited_count", $visited_count);
-    return $stm->execute();
+    $stm->execute();
+    $post_id = $conn->lastInsertId();
+    $sql_post_tag = "insert into post_tag (post_id, tag_id) values (:post_id, :tag_id)";
+    if($post_tags != null){
+        foreach ($post_tags as $post_tag){
+            $state_tag = $conn->prepare($sql_post_tag);
+            $state_tag->bindParam(":post_id", $post_id, PDO::PARAM_INT);
+            $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
+            $state_tag->execute();
+        }
+    }
+    return true;
+
 }
 
-function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $images = [])
+function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $images = [], $post_tags = null)
 {
+    /**
+    * @var $conn
+     */
     include "db_connect.php";
     $sql = "update posts set title_uz = :title_uz, title_ru = :title_ru, title_en = :title_en, category_id = :category_id, author_id = :author_id, content_uz = :content_uz, content_ru = :content_ru, content_en = :content_en, updated_at = :updated_at, thumb_img = :thumb_img, image = :image   where id = :id";
 
@@ -172,14 +218,28 @@ function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_
     $stm->bindParam(":updated_at", $updated_at);
     $stm->bindParam(":thumb_img", $thumb_img);
     $stm->bindParam(":image", $images);
-    return $stm->execute();
+    $stm->execute();
+    //check post tags and update
+    $updated_id  = $conn->lastInsertId();
+    $insert_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
+    if($post_tags != null){
+        foreach ($post_tags as $post_tag){
+                    $state_tag = $conn->prepare($insert_post_tag);
+                    $state_tag->bindParam(":post_id", $id, PDO::PARAM_INT);
+                    $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
+                    $state_tag->execute();
+                }
+        }
+
 }
 
-function updatePostnoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at)
+function updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $post_tags = null)
 {
+    /**
+     * @var $conn
+     */
     include "db_connect.php";
     $sql = "update posts set title_uz = :title_uz, title_ru = :title_ru, title_en = :title_en, category_id = :category_id, author_id = :author_id, content_uz = :content_uz, content_ru = :content_ru, content_en = :content_en, updated_at = :updated_at where id = :id";
-
     $stm = $conn->prepare($sql);
     $stm->bindParam(":id", $id);
     $stm->bindParam(":title_uz", $title_uz);
@@ -191,35 +251,21 @@ function updatePostnoImg($id, $title_uz, $title_ru, $title_en, $category_id, $au
     $stm->bindParam(":content_ru", $content_ru);
     $stm->bindParam(":content_en", $content_en);
     $stm->bindParam(":updated_at", $updated_at);
-    return $stm->execute();
+    $stm->execute();
+    //check post tags and update
+    $updated_id  = $conn->lastInsertId();
+    $insert_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
+    if($post_tags != null){
+        foreach ($post_tags as $post_tag){
+            $state_tag = $conn->prepare($insert_post_tag);
+            $state_tag->bindParam(":post_id", $id, PDO::PARAM_INT);
+            $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
+            $state_tag->execute();
+        }
+    }
+
+
 }
-
-
-
-
-
-function addCourse($title, $price)
-{
-    include "db_connect.php";
-    $sql = "insert into course (courseName, price_course) values (:courseName, :price_course)";
-    $stm = $conn->prepare($sql);
-    $stm->bindParam(":courseName", $title);
-    $stm->bindParam(":price_course", $price);
-    return $stm->execute();
-}
-
-function updateCourse($id, $courseName, $price)
-{
-    include "db_connect.php";
-    $sql = "update course set courseName = :courseName, price_course = :price
- where id=:id";
-    $stm = $conn->prepare($sql);
-    $stm->bindParam(":courseName", $courseName);
-    $stm->bindParam(":price", $price);
-    $stm->bindParam(":id", $id);
-    return $stm->execute();
-}
-
 
 function addUser($username, $paswword, $email, $role, $status)
 {

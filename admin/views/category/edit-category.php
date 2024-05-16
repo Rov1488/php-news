@@ -1,6 +1,4 @@
 <?php
-//include_once __DIR__. "/../../../config/db_connect.php";
-//include_once __DIR__. "/../../../config/db_functions.php";
 include __DIR__. "/../layout/header.php";
 
 $id = null;
@@ -38,7 +36,7 @@ if (isset($_POST['update_category'])){
                                 <div class="form-group has-feedback">
                                     <label for="login">Category name</label>
                                     <input class="form-control" name="category_title" id="category_title" type="text" data-error="You must write course name" value="<?=$result['title']?>" required>
-                                    <div class="help-block with-errors"></div>
+                                    <div class="help-block with-errors text-danger"></div>
                                 </div>
 
                             </div>

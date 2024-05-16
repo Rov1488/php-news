@@ -1,6 +1,6 @@
 <?php
 define("ROOT", dirname(__DIR__));
-define("LIMIT", 3);
+define("LIMIT", 5);
 define("VIEWS", ROOT . '/views'); //указываем к папке app
 define("PATH", 'http://dev-education.loc/');
 //define("DB_CONN", include (ROOT. '/../../config/config_db.php'));
