@@ -226,7 +226,7 @@ function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_
         foreach ($post_tags as $post_tag){
                     $state_tag = $conn->prepare($insert_post_tag);
                     $state_tag->bindParam(":post_id", $id, PDO::PARAM_INT);
-                    $state_tag->bindParam(":tag_id", $id, PDO::PARAM_INT);
+                    $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
                     $state_tag->execute();
                 }
         }
@@ -259,7 +259,7 @@ function updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $au
         foreach ($post_tags as $post_tag){
             $state_tag = $conn->prepare($insert_post_tag);
             $state_tag->bindParam(":post_id", $id, PDO::PARAM_INT);
-            $state_tag->bindParam(":tag_id", $id, PDO::PARAM_INT);
+            $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
             $state_tag->execute();
         }
     }
