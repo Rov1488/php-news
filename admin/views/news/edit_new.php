@@ -1,7 +1,7 @@
 <?php
 require __DIR__. "/../layout/header.php";
 
-$id = null;
+
 if(isset($_GET['id'])){
     $id = $_GET['id']; //id = 15;
 }
@@ -18,15 +18,18 @@ $content_ru = null;
 $content_en = null;
 //$created_at = date('Y-m-d H:i:s', time());
 $updated_at = date('Y-m-d H:i:s', time());
+$post_tags = null;
 $image = null;
 //thumb image size
 $thumb_img = null;
 $thumb_img_width = '150';
 $thumb_img_height = '80';
 
-//Get categories and author
+//Get categories, author and tags
 $category = getDataBYtable('category');
 $author = getDataBYtable('users');
+$tags = getDataBYtable('tag');
+$post_tag = getByPostId('post_tag', $id);
 
 if (isset($_POST['update_post'])){
 
@@ -53,6 +56,9 @@ if (isset($_POST['update_post'])){
     }
     if (isset($_POST["content_en"])) {
         $content_en = $_POST["content_en"];
+    }
+    if (isset($_POST["post_tags"])){
+        $post_tags = $_POST["post_tags"];
     }
 
 //Validation image
@@ -124,12 +130,10 @@ if (isset($_POST['update_post'])){
         }
     }
     if (!empty($thumb_img) && !empty($image)){
-        $result = updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $image);
+        $result = updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $image, $post_tags);
     }else{
-        $result = updatePostnoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at);
+        $result = updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $post_tags);
     }
-
-
     if ($result){
         redirect('news.php');
     }
@@ -164,7 +168,7 @@ if (isset($_POST['update_post'])){
                 <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Add Post</h3>
+                            <h3 class="card-title">Update Post</h3>
                         </div>
                         <form method="post" role="form" data-toggle="validator" enctype="multipart/form-data">
                             <div class="card-body">
@@ -186,6 +190,7 @@ if (isset($_POST['update_post'])){
                                 <div class="form-group has-feedback">
                                     <label class="form-label fw-bold" for="login">Category name</label>
                                     <select class="form-select" aria-label="Default select example" name="category_id" data-error="You must write fields name" required>
+
                                         <?php foreach ($category as $cat): ?>
                                             <option value="<?=$cat['id']?>" <?php echo (isset($_GET['id']) && $cat['id'] == $result["category_id"]) ? 'selected' : ""; ?>><?=$cat['title']?></option>
                                         <?php endforeach; ?>
@@ -214,6 +219,28 @@ if (isset($_POST['update_post'])){
                                             <option value="<?=$item['id']?>" <?php echo (isset($_GET['id']) && $item['id'] == $result["author_id"]) ? 'selected' : ""; ?>><?=$item['firstname']." ". $item['lastname']?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div class="help-block with-errors text-danger"></div>
+                                </div>
+
+                                <div class="form-group has-feedback">
+                                    <label class="form-label fw-bold" for="login">Post tags</label>
+                                    <div class="mb-3">
+                                        <select class="form-select" name="post_tags[]" id="small-select2-options-multiple-field" data-placeholder="Choose anything" multiple aria-label="Default select example">
+
+                                            <?php foreach ($tags as $tag): ?>
+
+                                                <option value="<?=$tag['id']?>" <?php
+                                                    foreach ($post_tag as $tag_id){
+                                                        if ($tag['id'] == $tag_id['tag_id']){
+                                                            echo "selected";
+                                                        }
+                                                    }
+                                                 ?>><?=$tag['name']?></option>
+
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
                                     <div class="help-block with-errors text-danger"></div>
                                 </div>
                                 <div class="form-group has-feedback">

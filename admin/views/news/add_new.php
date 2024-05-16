@@ -11,6 +11,7 @@ $content_ru = null;
 $content_en = null;
 $created_at = date('Y-m-d H:i:s', time());
 $updated_at = date('Y-m-d H:i:s', time());
+$post_tags = null;
 $image = null;
 //thumb image size
 $thumb_img = null;
@@ -20,6 +21,7 @@ $thumb_img_height = '90';
 //Get categories and author
 $category = getDataBYtable('category');
 $author = getDataBYtable('users');
+$tags = getDataBYtable('tag');
 
 if (isset($_POST['add_post'])){
 
@@ -46,6 +48,9 @@ if (isset($_POST['add_post'])){
     }
     if (isset($_POST["content_en"])) {
         $content_en = $_POST["content_en"];
+    }
+    if (isset($_POST["post_tags"])){
+        $post_tags = $_POST["post_tags"];
     }
 
 //Validation image
@@ -105,7 +110,7 @@ if (isset($_POST['add_post'])){
         }
     }
 
-    $result = addPost($title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $created_at, $updated_at, $thumb_img, $image);
+    $result = addPost($title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $created_at, $updated_at, $thumb_img, $image, $post_tags);
 
     if ($result){
         redirect('news.php');
@@ -196,6 +201,19 @@ if (isset($_POST['add_post'])){
                                     </select>
                                     <div class="help-block with-errors text-danger"></div>
                                 </div>
+
+                                <div class="form-group has-feedback">
+                                    <label class="form-label fw-bold" for="login">Post tags</label>
+                                    <div class="mb-3">
+                                    <select class="form-select" name="post_tags[]" id="small-select2-options-multiple-field" data-placeholder="Choose anything" multiple>
+                                        <?php foreach ($tags as $tag): ?>
+                                            <option value="<?=$tag['id']?>"><?=$tag['name']?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    </div>
+                                    <div class="help-block with-errors text-danger"></div>
+                                </div>
+
                                 <div class="form-group has-feedback">
                                     <label class="form-label fw-bold" for="login">Upload images</label>
                                     <input class="form-control" name="images[]" id="images" type="file" multiple data-error="You must write fields name" value="">

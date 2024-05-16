@@ -11,6 +11,9 @@ require __DIR__ . "/../../../config/db_functions.php";
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css">
     <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/select2.min.css" rel="stylesheet">
+    <link href="/assets/css/select2-bootstrap-5-theme.min.css" rel="stylesheet">
+    <link href="/assets/css/select2-bootstrap-5-theme.rtl.min.css" rel="stylesheet">
 </head>
 <body>
 <header class="container">
