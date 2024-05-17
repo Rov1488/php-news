@@ -61,9 +61,9 @@ function getByPostId($tableName, $post_id)
     include "db_connect.php";
     $sql = "select tag_id from {$tableName} where post_id = :post_id";
     $st = $conn->prepare($sql);
-    $st->bindParam(":post_id", $post_id);
+    $st->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
     $st->execute();
-    return $st->fetchAll(PDO::FETCH_ASSOC);
+    return $st->fetchAll(\PDO::FETCH_ASSOC);
 }
 
 //FOR PAGINATION
@@ -197,7 +197,7 @@ values (:title_uz, :title_ru, :title_en, :category_id, :author_id, :content_uz, 
 
 }
 
-function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $images = [], $post_tags = null)
+function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $images = [])
 {
     /**
     * @var $conn
@@ -218,22 +218,12 @@ function updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_
     $stm->bindParam(":updated_at", $updated_at);
     $stm->bindParam(":thumb_img", $thumb_img);
     $stm->bindParam(":image", $images);
-    $stm->execute();
-    //check post tags and update
-    $updated_id  = $conn->lastInsertId();
-    $insert_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
-    if($post_tags != null){
-        foreach ($post_tags as $post_tag){
-                    $state_tag = $conn->prepare($insert_post_tag);
-                    $state_tag->bindParam(":post_id", $id, PDO::PARAM_INT);
-                    $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
-                    $state_tag->execute();
-                }
-        }
+    return $stm->execute();
+
 
 }
 
-function updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $post_tags = null)
+function updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at)
 {
     /**
      * @var $conn
@@ -251,19 +241,61 @@ function updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $au
     $stm->bindParam(":content_ru", $content_ru);
     $stm->bindParam(":content_en", $content_en);
     $stm->bindParam(":updated_at", $updated_at);
+   return $stm->execute();
+
+}
+
+//Function CRUD post_tag
+function editPostTag($post_id, $tag_id){
+    /**
+     * @var $conn
+     */
+    include "db_connect.php";
+
+    //выборка все данных по post_id из таблицы post_tag
+    $select_tags = "SELECT tag_id from post_tag where post_id = :post_id";
+    $stm = $conn->prepare($select_tags);
+    $stm->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
     $stm->execute();
-    //check post tags and update
-    $updated_id  = $conn->lastInsertId();
+    $post_tag_id = $stm->fetchAll(\PDO::FETCH_ASSOC);
+
+//если менеджер убрал свянанных товаров - удаляем их
+    if (empty($tag_id) && !empty($post_tag_id)){
+        $delete_tag = "DELETE FROM post_tag WHERE post_id = :post_id";
+        $delete_stm = $conn->prepare($delete_tag);
+        $delete_stm->bindParam(':post_id', $post_id, \PDO::PARAM_INT);
+        return $delete_stm->execute();
+
+    }
+    //если добавляются новые tag_id
     $insert_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
-    if($post_tags != null){
-        foreach ($post_tags as $post_tag){
+    if (empty($post_tag_id) && !empty($tag_id)){
+        foreach ($tag_id as $item){
             $state_tag = $conn->prepare($insert_post_tag);
-            $state_tag->bindParam(":post_id", $id, PDO::PARAM_INT);
-            $state_tag->bindParam(":tag_id", $post_tag, PDO::PARAM_INT);
-            $state_tag->execute();
+            $state_tag->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
+            $state_tag->bindParam(":tag_id", $item, \PDO::PARAM_INT);
+            return $state_tag->execute();
+
         }
     }
+    //если изменились tag_id то тогда удаляем и перезапищем новых тегов
+    $insert_change_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
+    if (!empty($tag_id)){
+        $result = array_diff($post_tag_id, $tag_id);
+        if (!empty($result) || count($post_tag_id) != count($tag_id)){
+            $del_cheng_tag = "DELETE FROM post_tag WHERE post_id = :post_id";
+            $del_cheng_stm = $conn->prepare($del_cheng_tag);
+            $del_cheng_stm->bindParam(':post_id', $post_id, \PDO::PARAM_INT);
+            $del_cheng_stm->execute();
+            foreach ($tag_id as $value){
+                $stm_change_tag = $conn->prepare($insert_change_post_tag);
+                $stm_change_tag->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
+                $stm_change_tag->bindParam(":tag_id", $value, \PDO::PARAM_INT);
+                return $stm_change_tag->execute();
 
+            }
+        }
+    }
 
 }
 
