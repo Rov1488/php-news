@@ -31,6 +31,8 @@ $author = getDataBYtable('users');
 $tags = getDataBYtable('tag');
 $post_tag = getByPostId('post_tag', $id);
 
+
+
 if (isset($_POST['update_post'])){
 
     if (isset($_POST["title_uz"])) {
@@ -130,14 +132,15 @@ if (isset($_POST['update_post'])){
         }
     }
     if (!empty($thumb_img) && !empty($image)){
-        $result = updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $image, $post_tags);
+        $result = updatePost($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $thumb_img, $image);
 
     }else{
-        $result = updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at, $post_tags);
+        $result = updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at);
     }
     if ($result){
-        editPostTag($id, $post_tags);
-        redirect('news.php');
+         editPostTag($id, $post_tags);
+            redirect('news.php');
+
     }
 }
 ?>
