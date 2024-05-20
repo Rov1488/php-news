@@ -251,52 +251,69 @@ function editPostTag($post_id, $tag_id){
      * @var $conn
      */
     include "db_connect.php";
-
+    $id = $post_id;
     //выборка все данных по post_id из таблицы post_tag
-    $select_tags = "SELECT tag_id from post_tag where post_id = :post_id";
-    $stm = $conn->prepare($select_tags);
-    $stm->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
-    $stm->execute();
-    $post_tag_id = $stm->fetchAll(\PDO::FETCH_ASSOC);
+    $post_tag_id = getByPostId('post_tag', $id);
+
+    $delete_tag = "DELETE FROM post_tag WHERE post_id = :post_id";//delete post tags
+    $insert_post_tag = "insert into post_tag (post_id, tag_id) values (:post_id, :tag_id)"; //insert post tags
 
 //если менеджер убрал свянанных товаров - удаляем их
     if (empty($tag_id) && !empty($post_tag_id)){
-        $delete_tag = "DELETE FROM post_tag WHERE post_id = :post_id";
         $delete_stm = $conn->prepare($delete_tag);
-        $delete_stm->bindParam(':post_id', $post_id, \PDO::PARAM_INT);
+        $delete_stm->bindParam(':post_id', $id, \PDO::PARAM_INT);
         return $delete_stm->execute();
 
     }
     //если добавляются новые tag_id
-    $insert_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
     if (empty($post_tag_id) && !empty($tag_id)){
         foreach ($tag_id as $item){
             $state_tag = $conn->prepare($insert_post_tag);
-            $state_tag->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
+            $state_tag->bindParam(":post_id", $id, \PDO::PARAM_INT);
             $state_tag->bindParam(":tag_id", $item, \PDO::PARAM_INT);
             return $state_tag->execute();
 
         }
     }
     //если изменились tag_id то тогда удаляем и перезапищем новых тегов
-    $insert_change_post_tag = "INSERT IGNORE INTO post_tag (post_id, tag_id) values (:post_id, :tag_id)";
     if (!empty($tag_id)){
         $result = array_diff($post_tag_id, $tag_id);
-        if (!empty($result) || count($post_tag_id) != count($tag_id)){
-            $del_cheng_tag = "DELETE FROM post_tag WHERE post_id = :post_id";
-            $del_cheng_stm = $conn->prepare($del_cheng_tag);
-            $del_cheng_stm->bindParam(':post_id', $post_id, \PDO::PARAM_INT);
+        if (!empty($result) || count($post_tag_id) !== count($tag_id)){
+            $del_cheng_stm = $conn->prepare($delete_tag);
+            $del_cheng_stm->bindParam(':post_id', $id, \PDO::PARAM_INT);
             $del_cheng_stm->execute();
             foreach ($tag_id as $value){
-                $stm_change_tag = $conn->prepare($insert_change_post_tag);
-                $stm_change_tag->bindParam(":post_id", $post_id, \PDO::PARAM_INT);
+                $stm_change_tag = $conn->prepare($insert_post_tag);
+                $stm_change_tag->bindParam(":post_id", $id, \PDO::PARAM_INT);
                 $stm_change_tag->bindParam(":tag_id", $value, \PDO::PARAM_INT);
                 return $stm_change_tag->execute();
-
             }
         }
     }
 
+
+}
+
+function addPostTag($id, $tag_id){
+    /**
+     * @var $conn
+     */
+    include "db_connect.php";
+    $sql = "insert into post_tag (post_id, tag_id) values (':post_id', ':tag_id')";
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":post_id", $id, \PDO::PARAM_INT);
+    $stm->bindParam(":tag_id", $tag_id, \PDO::PARAM_INT);
+    return $stm->execute();
+}
+function deletePostTag($id){
+    /**
+     * @var $conn
+     */
+    include "db_connect.php";
+    $sql = "delete from post_tag where post_id = :post_id";
+    $stm = $conn->prepare($sql);
+    $stm->bindParam(":post_id", $id, \PDO::PARAM_INT);
+    return $stm->execute();
 }
 
 function addUser($username, $paswword, $email, $role, $status)
