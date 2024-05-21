@@ -137,8 +137,34 @@ if (isset($_POST['update_post'])){
     }else{
         $result = updatePostNoImg($id, $title_uz, $title_ru, $title_en, $category_id, $author_id, $content_uz, $content_ru, $content_en, $updated_at);
     }
+
     if ($result){
-         editPostTag($id, $post_tags);
+        //выборка все данных по post_id из таблицы post_tag
+            editPostTag($id, $post_tags);
+
+        //если менеджер убрал свянанных товаров - удаляем их
+       /* if(empty($post_tags) && !empty($post_tag)){
+            deletePostTag($id);
+            redirect('news.php');
+        }*/
+        //если добавляются новые tag_id
+      /*  if (empty($post_tag) && !empty($post_tags)){
+            foreach ($post_tags as $tag){
+                addPostTag($id, $tag);
+            }
+            redirect('news.php');
+        }*/
+        //если изменились tag_id то тогда удаляем и перезапищем новых тегов
+       /* if (!empty($post_tags)){
+            $tag_diff = array_diff($post_tag, $post_tags);
+            if (!empty($tag_diff) || count($post_tag) != count($post_tags)){
+                deletePostTag($id);
+                foreach ($post_tags as $value){
+                    addPostTag($id, $value);
+                }
+                redirect('news.php');
+            }
+        }*/
             redirect('news.php');
 
     }
