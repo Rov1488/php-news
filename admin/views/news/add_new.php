@@ -74,7 +74,7 @@ if (isset($_POST['add_post'])){
             $file_name = $_FILES['images']['name'][$key];
             $file_size = $_FILES['images']['size'][$key];
             $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-            $images [] = date('Y-m-d', time())."_".$file_name;
+            $images [] = date('Y-m-d H:i:s', time())."_".$file_name;
             //thumb_img prepare
             $thumb_file_name = $images[0];
             $thumb_img = $thumb_file_name;
@@ -82,7 +82,7 @@ if (isset($_POST['add_post'])){
             $thumb_file_ext = strtolower(end($file_format_arr));
             $image = implode(",", $images);//image name string for save DB
 
-            $new_name = date('Y-m-d', time())."_".$file_name;
+            $new_name = date('Y-m-d H:i:s', time())."_".$file_name;
             $upload_dir = $upload_folder.$thumb_file_name;
             $filepath = $upload_folder.$new_name;
             if (in_array(strtolower($file_ext), $extensions) === false) {

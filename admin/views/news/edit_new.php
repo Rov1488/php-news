@@ -90,9 +90,9 @@ if (isset($_POST['update_post'])){
             $filtered_array = array_filter($res_images, function ($item) use ($file_name){
                    return $item == $file_name;
             });
-            //print_r($filtered_array);die();
 
-            if ($file_name !== $filtered_array){
+
+            if ($file_name !== $filtered_array || empty($result['image']) && empty($result['thumb_img'])){
 
             if (in_array(strtolower($file_ext), $extensions) === false) {
                 $errors[] = "Fayl formati JPEG yoki PNG bo`lishi kerak.";
@@ -100,7 +100,7 @@ if (isset($_POST['update_post'])){
             if ($file_size > $maxsize) {
                 $errors[] = 'File hajmi 30 MB dan katta bo`lmasligi kerak';
             }
-                $images [] = date('Y-m-d', time())."_".$file_name;
+                $images [] = date('Y-m-d H:i:s', time())."_".$file_name;
                 //thumb_img prepare
                 $thumb_file_name = $images[0];
                 $thumb_img = $thumb_file_name;
@@ -109,7 +109,7 @@ if (isset($_POST['update_post'])){
 
                 $image = implode(",", $images);//image name string for save DB
 
-                $new_name = date('Y-m-d', time())."_".$file_name;
+                $new_name = date('Y-m-d H:i:s', time())."_".$file_name;
                 $upload_dir = $upload_folder.$thumb_file_name;
                 $filepath = $upload_folder.$new_name;
 
