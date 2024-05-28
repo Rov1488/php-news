@@ -319,31 +319,41 @@ function deletePostTag($id){
 
 }
 
-function addUser($username, $paswword, $email, $role, $status)
-{
-    include __DIR__. "/../config/config_db.php";
+function addUser($username, $password, $confirm_password, $firstname, $lastname, $email, $role, $status, $user_img = null){
+    /**
+     * @var $conn
+     */
+    include "db_connect.php";
 
-    $hash_pass = password_hash($paswword, PASSWORD_DEFAULT);
-    $sql = "insert into users (username, password, email, role, status) values (:username, :password, :email, :role, :status)";
+    $hash_pass = password_hash($password, PASSWORD_DEFAULT);
+    $confirm_hash = password_hash($confirm_password, PASSWORD_DEFAULT);
+    $sql = "insert into users (username, password, confirm_password, firstname, lastname, email, user_img, role, status) values (:username, :password, :confirm_password, :firstname, :lastname, :email, :user_img, :role, :status)";
     $stm = $conn->prepare($sql);
     $stm->bindParam(":username", $username);
     $stm->bindParam(":password", $hash_pass);
+    $stm->bindParam(":confirm_password", $confirm_hash);
+    $stm->bindParam(":firstname", $firstname);
+    $stm->bindParam(":lastname", $lastname);
     $stm->bindParam(":email", $email);
+    $stm->bindParam(":user_img", $user_img);
     $stm->bindParam(":role", $role);
     $stm->bindParam(":status", $status);
     try {
         return $stm->execute();
-    }catch (PDOException $e){
+    }catch (\PDOException $e){
         $error = $e->getMessage();
+        return $error;
     }
-
 }
 
-function updateUser($id, $username, $paswword, $email, $role, $status)
+function updateUser($id, $username, $password, $confirm_password, $firstname, $lastname, $email, $role, $status)
 {
-    include __DIR__. "/../config/config_db.php";
+    /**
+     * @var $conn
+     */
+    include "db_connect.php";
 
-    $hash_pass = password_hash($paswword, PASSWORD_DEFAULT);
+    $hash_pass = password_hash($password, PASSWORD_DEFAULT);
     $sql = "update users set username = :username, password = :password, email = :email, role = :role, status = :status where id=:id";
     $stm = $conn->prepare($sql);
     $stm->bindParam(":username", $username);

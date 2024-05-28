@@ -1,4 +1,5 @@
 <?php
+session_start();
 require __DIR__. "/../../../config/db_connect.php";
 require __DIR__ . "/../../../config/db_functions.php";
 ?>
