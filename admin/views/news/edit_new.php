@@ -90,7 +90,7 @@ if (isset($_POST['update_post'])){
             $filtered_array = array_filter($res_images, function ($item) use ($file_name){
                    return $item == $file_name;
             });
-
+            //print_r($filtered_array);die();
 
             if ($file_name !== $filtered_array || empty($result['image']) && empty($result['thumb_img'])){
 
