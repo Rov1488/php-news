@@ -45,10 +45,11 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['password'])){
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/views/tag/tag.php">Tags</a>
                     </li>
-
+                    <?php if (!isset($_SESSION['username'])) { ?>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/views/auth/register.php">SignUp</a>
                     </li>
+                    <?php } ?>
                     <?php if (!isset($_SESSION['username'])) { ?>
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/views/auth/login.php">Login</a>
