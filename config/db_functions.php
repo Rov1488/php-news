@@ -1,5 +1,6 @@
 <?php
 include "init.php";
+include "db_connect.php";
 
 function debug($arr, $die = false){
     echo '<pre>'. print_r($arr, true) .'</pre>';
@@ -319,65 +320,6 @@ function deletePostTag($id){
 
 }
 
-function addUser($username, $password, $confirm_password, $firstname, $lastname, $email, $role, $status, $user_img = null){
-    /**
-     * @var $conn
-     */
-    include "db_connect.php";
-
-    $hash_pass = password_hash($password, PASSWORD_DEFAULT);
-    $confirm_hash = password_hash($confirm_password, PASSWORD_DEFAULT);
-    $sql = "insert into users (username, password, confirm_password, firstname, lastname, email, user_img, role, status) values (:username, :password, :confirm_password, :firstname, :lastname, :email, :user_img, :role, :status)";
-    $stm = $conn->prepare($sql);
-    $stm->bindParam(":username", $username);
-    $stm->bindParam(":password", $hash_pass);
-    $stm->bindParam(":confirm_password", $confirm_hash);
-    $stm->bindParam(":firstname", $firstname);
-    $stm->bindParam(":lastname", $lastname);
-    $stm->bindParam(":email", $email);
-    $stm->bindParam(":user_img", $user_img);
-    $stm->bindParam(":role", $role);
-    $stm->bindParam(":status", $status);
-    try {
-        return $stm->execute();
-    }catch (\PDOException $e){
-        $error = $e->getMessage();
-        return $error;
-    }
-}
-
-function updateUser($id, $username, $password, $confirm_password, $firstname, $lastname, $email, $role, $status)
-{
-    /**
-     * @var $conn
-     */
-    include "db_connect.php";
-
-    $hash_pass = password_hash($password, PASSWORD_DEFAULT);
-    $sql = "update users set username = :username, password = :password, email = :email, role = :role, status = :status where id=:id";
-    $stm = $conn->prepare($sql);
-    $stm->bindParam(":username", $username);
-    $stm->bindParam(":password", $hash_pass);
-    $stm->bindParam(":email", $email);
-    $stm->bindParam(":role", $role);
-    $stm->bindParam(":status", $status);
-    $stm->bindParam(":id", $id);
-    return $stm->execute();
-}
-
-function checkUser($username){
-
-    include __DIR__. "/../config/config_db.php";
-
-    //$hash_pass = password_hash($password, PASSWORD_DEFAULT);
-    $sql = "SELECT * FROM users where username = :username";
-    $sth = $conn->prepare($sql);
-    $sth->bindParam(":username", $username);
-    //$sth->bindParam(":password", $password);
-    $sth->execute();
-    return $sth->fetch(PDO::FETCH_ASSOC);
-}
-
 /*
  * Function upload image
  * */
@@ -385,7 +327,6 @@ function uploadFile(string $file_tmp, string $upload_folder, string $file_name):
         @move_uploaded_file($file_tmp, $upload_folder.$file_name);
             return true;
 }
-
 
 //resize image изменения размера изображение
 

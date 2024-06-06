@@ -2,6 +2,13 @@
 session_start();
 require __DIR__. "/../../../config/db_connect.php";
 require __DIR__ . "/../../../config/db_functions.php";
+//Cheking users authentication and authorization
+if (!isset($_SESSION['username']) || !isset($_SESSION['password'])){
+    unset($_SESSION);
+    redirect('/admin/views/auth/login.php');
+    //die();
+}
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -38,6 +45,19 @@ require __DIR__ . "/../../../config/db_functions.php";
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/views/tag/tag.php">Tags</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/views/auth/register.php">SignUp</a>
+                    </li>
+                    <?php if (!isset($_SESSION['username'])) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/views/auth/login.php">Login</a>
+                    </li>
+                    <?php }else{ ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/views/auth/login.php?data=logOut">logOut (<?=$_SESSION['username'];?>)</a>
+                    </li>
+                    <?php } ?>
                     <!--<li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Dropdown

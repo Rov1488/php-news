@@ -20,9 +20,8 @@ if (isset($_POST['signup'])){
 
     //проверка username из БД на уникальност и текста
     if (isset($_POST['username']) && !empty($_POST['username'])) {
-        $username = $_POST['username'];
         $username = trim(htmlChars($_POST["username"]));
-        $leng_username = strlen($username);
+        $leng_username = mb_strlen($username);
 
         //Polyani sonlar kiritilgan bo'sa Erros massivga xatoni yozish
         if (!preg_match("/^[a-я0-9A-Я0-9][-a-z0-9A-Z0-9]*$/", $username)) {
@@ -30,12 +29,12 @@ if (isset($_POST['signup'])){
             $_SESSION['error']['username'][] = $nameErr_1;
         }
         //Polyada 3 ta harfdan kam bo'lsa Erros massivga xatoni yozish
-        if ($leng_username < 3) {
+        if ($leng_username < 4) {
             $nameErr_2 = "Username kamida 3 ta harfdan tashkil topgan bo'lsin";
             $_SESSION['error']['username'][] = $nameErr_2;
         }
         foreach (getDataBYtable("users") as $item) {
-            if ($username === $item['username']) {
+            if ($username == $item['username']) {
                 $emailErr_2 = "Ushbu username bilan ro'yhatdan o'tilgan iltimos boshqa username kirining";
                 $_SESSION['error']['username'][] = $emailErr_2;
             }
@@ -70,13 +69,12 @@ if (isset($_POST['signup'])){
 
     //Password tekshiruvi
     if (isset($_POST["password"]) && !empty($_POST["password"])){
-        $password = $_POST['password'];
         $password = trim(htmlChars($_POST["password"]));
         $length_pass = mb_strlen($password);
         //$last_val = mb_substr($password, -2, 2);
         //$last = $last_val;
-        if ($length_pass < 8){
-            $passwordErr_1 = "Password qator kammida 8 simvol bo'lishi kerak Siz {$length_pass} simvol kiritdingiz";
+        if ($length_pass < 6){
+            $passwordErr_1 = "Password qator kammida 6 simvol bo'lishi kerak Siz {$length_pass} simvol kiritdingiz";
             $_SESSION['error']['password'][] = $passwordErr_1;
         }
        /* if (!is_numeric($last_val)){
@@ -94,7 +92,7 @@ if (isset($_POST['signup'])){
     if (isset($_POST["confirm_password"]) && !empty($_POST["confirm_password"])){
         $confirm_password = trim(htmlChars($_POST["confirm_password"]));
         $length_pass_confir = mb_strlen($confirm_password);
-        if ($length_pass_confir < 8){
+        if ($length_pass_confir < 6){
             $conf_pass_Err_1 = "Confir_password qator kammida 8 simvol bo'lishi kerak Siz {$length_pass_confir} simvol kiritdingiz";
             $_SESSION['error']['confirm_password'][] = $conf_pass_Err_1;
         }
@@ -119,15 +117,31 @@ if (isset($_POST['signup'])){
 
     //Запис в БД если все ОК
     if (empty($_SESSION['error'])){
-        $result = addUser($username, $password, $confirm_password, $firstname, $lastname, $email, $role, $status);
+
+        $hash_password = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "insert into users (username, password, email, firstname, lastname, role, status) values (:username, :password, :email, :firstname, :lastname, :role, :status)";
+        $stm = $conn->prepare($sql);
+        $stm->bindParam(":username", $username);
+        $stm->bindParam(":password", $hash_password);
+        $stm->bindParam(":firstname", $firstname);
+        $stm->bindParam(":lastname", $lastname);
+        $stm->bindParam(":email", $email);
+        $stm->bindParam(":role", $role);
+        $stm->bindParam(":status", $status);
+        try {
+            $result = $stm->execute();
+        } catch (PDOException $e) {
+            $error = $e->getMessage();
+        }
+
         if ($result){
             $_SESSION['success'] = "Foydalanuvchi qo'shildi!";
-            redirect('/admin/views/auth/register.php');
+            redirect('/admin/views/auth/login.php');
         }
     }else{
         redirect('/admin/views/auth/register.php');
     }
 
 }else{
-    $_SESSION['error'] = "Maydonlar to'ldirilmagan iltimos barcha maydonlarni to'ldirib qaytadan yuboring";
+    $_SESSION['error']['fields'][]= "Maydonlar to'ldirilmagan iltimos barcha maydonlarni to'ldirib qaytadan yuboring";
 }
